@@ -1,11 +1,11 @@
 # Load required libraries
 library(dplyr)
-library(terra)  # Replaces raster
 library(sf)     # Replaces sp and rgdal
 library(vegan)
 library(ggrepel)
 library(ggplot2)
 library(viridis)
+library(raster)
 
 # Set working directory
 setwd("/mmfs1/projects/brent.hulke/LewisFlax/FlaxFrostTolerance/")
@@ -198,7 +198,6 @@ anova.cca(my_full_rda, permutations=1000)
 anova.cca(my_full_rda, by="margin", permutations=1000)
 anova.cca(my_full_rda, by="terms", permutations=1000) 
 anova.cca(my_full_rda, by="axis", permutations=1000)
-anova_rda_full<-rbind(anova_rda,anova2,anova3,anova4)
 
 # Define the color palette
 color_palette <- viridis::viridis(10)[c(2, 6)]
@@ -206,14 +205,11 @@ color_palette <- viridis::viridis(10)[c(2, 6)]
 mv_rda_triplotgg_SUPP <- ggplot() +
   theme(text = element_text(size = 14)) +
   geom_point(data=mv_rda.site_sc, aes(x = RDA1, y = RDA2), size=3, alpha=0.5) +
-  # Uncomment and adjust the size in these lines as needed
-  # geom_text(data=mv_rda.site_sc, aes(x = RDA1, y = RDA2, label=rownames(mv_rda.site_sc)), hjust=0, vjust=0, size=3, alpha=.5) +
-  # geom_text_repel(data=mv_full_rda, aes(x = RDA1, y = RDA2, label=Label), size=3, alpha=0.5, max.overlaps = 11) +
   geom_segment(data=mv_rda.sp_sc, aes(x=0, xend=RDA1, y=0, yend=RDA2), color=color_palette[1], arrow=arrow(length=unit(.03, "npc"))) +
-  geom_text_repel(data=mv_rda.sp_sc, aes(x=RDA1,y=RDA2,label=rownames(mv_rda.sp_sc)), color=color_palette[1], size=4) +
+  geom_text_repel(data=mv_rda.sp_sc, aes(x=RDA1,y=RDA2,label=rownames(mv_rda.sp_sc)), color=color_palette[1], size=4, ) +
   geom_segment(data=mv_rda.env_sc, aes(x=0, xend=RDA1, y=0, yend=RDA2), color=color_palette[2], alpha=0.5, arrow=arrow(length=unit(.03,"npc"))) +
-  geom_text_repel(data=mv_rda.env_sc, aes(x=RDA1,y=RDA2,label=rownames(mv_rda.env_sc)), color=color_palette[2], alpha=0.5, size=4) +
-  geom_text_repel(data=mv_rda.site_sc, aes(x = RDA1, y = RDA2, label=rownames(mv_rda.site_sc)), size=3, alpha=0.5) +
+  geom_text_repel(data=mv_rda.env_sc, aes(x=RDA1,y=RDA2,label=rownames(mv_rda.env_sc)), color=color_palette[2], alpha=0.5, size=4, force = 2, force_pull = 0.5) +
+  geom_text_repel(data=mv_rda.site_sc, aes(x = RDA1, y = RDA2, label=rownames(mv_rda.site_sc)), size=3, alpha=0.5, force = 2, force_pull = 0.5) +
   labs(x=paste0("RDA1 ","(",100*mv_rda_eigenvals_adj[2,1],"%)"), y=paste0("RDA2 ", "(",100*mv_rda_eigenvals_adj[2,2],"%)"), title="") +
   theme_bw() +
   theme(text = element_text(size = 14))

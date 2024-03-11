@@ -2,6 +2,10 @@ library(ggplot2)
 library(viridis)
 library(dplyr)
 library(ggrepel)
+library(stringr)
+
+# Seed for recreating the exact same layout
+set.seed(22)
 
 # Set working directory
 setwd("/mmfs1/projects/brent.hulke/LewisFlax/FlaxFrostTolerance/")
@@ -11,6 +15,10 @@ data <- read.csv("flaxFrostSurvivorFunctionEstimateHazardTime3.csv", sep = ",")
 
 # Generate colors from the viridis palette for High, Low, and Maple Grove
 colors <- viridis::viridis(10)
+
+# Shorten the acccession labels that are too long
+data <- data %>%
+  mutate(accession = str_replace(accession, "Teddy Roosevelt National Park NU 1", "TRNP NU 1"))
 
 # Define new columns 'color' and 'label_size' in your data based on 'hazardLabel'
 data <- data %>%
@@ -46,17 +54,20 @@ gg_plot <- ggplot() +
   geom_text_repel(
     data = filter(data, temperature == 15),
     aes(x = temperature, y = survivorFunctionEstimate, label = accession, color = color),
-    size = 2.5,  # Set the label size here
+    size = 3,  # Set the label size here
     nudge_x = 5, nudge_y = 0,
     direction = "y",
-    force_pull = 3,
+    force_pull = 10,
     force = 1,
-    point.padding = unit(0.1, "lines"),
+    box.padding = 0.1, # padding around the text label
+    max.time = 5, # maximum seconds to resolve overlaps
+    max.iter = 100000 # max iterations to resolve overlaps
   ) +
   scale_x_continuous(
     breaks = seq(3, 15, by = 3),
     labels = negative_label,
-    limits = c(3, 20)  # Set x-axis limits here
+    limits = c(3, 20),  # Set x-axis limits here
+    minor_breaks = seq(0, 1, 0.05) # Removes grid lines past final label (-15)
   ) +
   scale_y_continuous(breaks = c(0, 0.25, 0.50, 0.75, 1)) +
   theme_bw() +
@@ -67,4 +78,4 @@ gg_plot <- ggplot() +
   theme(legend.position = "none")  # Adjust right margin
 
 # Save the plot
-ggsave("SurvivalHazardByAccession_17x23cm_600dpi.jpg", plot = gg_plot, units = "cm", width = 17, height = 23, dpi = 600)
+ggsave("SurvivalHazardByAccession_seed22size3_17x23cm_600dpi.jpg", plot = gg_plot, units = "cm", width = 17, height = 23, dpi = 600)

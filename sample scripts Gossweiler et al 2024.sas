@@ -1,4 +1,3 @@
-```sas
 /* Code samples for Gossweiler et al., 2024 analyses */
 /* Growth rate */
 proc sort data=raw_data;
@@ -112,4 +111,3 @@ quit;
 Proc corr data=input_data_correlation pearson plots=scatter(nvar=all); 
  Var ElevationM Latitude Longitude _0to1Avg _1to2Avg _2to3Avg SurvAvg_1 SurvAvg_2 SurvAvg_3 Freeze_Damage HT_0 HT_1 HT_2 HT_3 ;
 run;
-```
